@@ -97,7 +97,7 @@
 /* Cartaz de abertura preservado inteiro, sem filtro ou corte. */
 .hero-photo picture{aspect-ratio:1055/1491}.hero-photo img{object-fit:contain;object-position:center;filter:none}.hero-photo{max-width:440px;justify-self:center;width:calc(100% - 28px)}@media(max-width:600px){.hero-photo{width:72%;margin:38px auto 18px;max-width:340px}.hero-photo picture{aspect-ratio:1055/1491}}
 
-.teaser-screen.teaser-embed{aspect-ratio:16/9;min-height:0}.teaser-embed iframe{display:block;width:100%;height:100%;border:0}.teaser-link{margin-top:14px;font-size:.9rem}
+.teaser-screen.teaser-embed{aspect-ratio:16/9;min-height:0}.teaser-embed iframe{position:absolute;inset:0;display:block;width:100%;height:100%;border:0}.teaser-link{margin-top:14px;font-size:.9rem}
 
 .hero h1 #assinatura-titulo {
   display: block;
