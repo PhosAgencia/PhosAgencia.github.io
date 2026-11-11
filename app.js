@@ -7,7 +7,7 @@ const imageDescriptions = {
   './assets/logo-abertura.png': 'Logomarca do curta sobre fundo azul. Em letras manuscritas brancas, a palavra Sinto aparece no alto à esquerda, sua no centro e falta embaixo à direita.',
   './assets/logo.webp': 'Logomarca do curta em letras manuscritas. As palavras Sinto, sua e falta aparecem lado a lado, com traços finos e irregulares.',
   './assets/unicid.png': 'Logomarca da UNICID. À esquerda há uma estrela formada por linhas entrelaçadas; à direita, a palavra UNICID em letras maiúsculas e, abaixo, Universidade Cidade de S. Paulo.',
-  './assets/oakley.png': 'Logomarca Oakley: um símbolo oval alongado sobre a palavra OAKLEY em letras maiúsculas espaçadas.',
+  './assets/oakley-transparente.png': 'Logomarca Oakley: um símbolo oval alongado sobre a palavra OAKLEY em letras maiúsculas espaçadas.',
   './assets/casio.png': 'Logomarca CASIO, escrita em letras maiúsculas largas e arredondadas.',
   './assets/reflexo-1440.webp': 'Fotografia horizontal e bastante escura. Uma pessoa aparece diante de um espelho, segurando uma câmera preta junto ao rosto, que fica quase todo encoberto pelo equipamento e pelas mãos. Seu cabelo ocupa a parte superior central da imagem. À direita, vê-se parcialmente a silhueta de outra pessoa; o fundo é discreto e pouco iluminado.',
   './assets/camera-1440.webp': 'Fotografia vertical, em iluminação muito baixa, feita diante de um espelho. Uma pessoa segura uma câmera preta à altura do rosto; o equipamento e as mãos cobrem a maior parte de suas feições. À direita, outra mão aparece próxima ao braço da pessoa, que usa uma pulseira. Um pedaço de rosto e cabelo aparece à esquerda, em meio às sombras.',
@@ -26,8 +26,8 @@ for (const button of document.querySelectorAll('[data-image]')) {
     opener = button;
     const image = document.querySelector('#lightbox-image');
     image.src = button.dataset.image;
-    image.classList.toggle('lightbox-brand', /\/assets\/(unicid|oakley|casio)\.png$/.test(button.dataset.image));
-    image.classList.toggle('lightbox-oakley', button.dataset.image.endsWith('/oakley.png'));
+    image.classList.toggle('lightbox-brand', /\/assets\/(unicid|oakley-transparente|casio)\.png$/.test(button.dataset.image));
+    image.classList.remove('lightbox-oakley');
     image.alt = button.querySelector('img').alt;
     document.querySelector('#lightbox-caption').textContent = button.dataset.caption;
     document.querySelector('#lightbox-description').textContent = imageDescriptions[button.dataset.image] || image.alt;

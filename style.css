@@ -113,3 +113,6 @@
   font: .8rem var(--mono);
   text-decoration: underline;
 }
+
+/* Transparência em cada quadro da assinatura animada. */
+.hero h1 #assinatura-titulo { filter: url(#assinatura-transparente); }
