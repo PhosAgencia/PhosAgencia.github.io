@@ -3,6 +3,14 @@ import { validEvent, calendarICS, googleCalendarURL } from './features.js';
 
 // Descrições detalhadas apresentadas somente no diálogo de imagem.
 const imageDescriptions = {
+  './assets/ilustracao-01.jpeg': 'Ilustração em aquarela de duas pessoas se beijando. À esquerda, uma figura em azul, de cabelo curto, toca o pescoço da outra; à direita, uma figura em bege tem cabelo e barba curtos. Entre elas há um coração vermelho, sobre um fundo cinza-claro.',
+  './assets/ilustracao-02.jpeg': 'Ilustração em aquarela de um homem em tons de azul reclinado sobre almofadas cinzas, com as mãos juntas à frente do corpo. Ele tem cabelo curto e barba; uma grande forma vermelha ocupa o primeiro plano à esquerda, sobre fundo branco.',
+  './assets/ilustracao-03.jpeg': 'Ilustração em aquarela de duas pessoas muito próximas. Uma figura azul está deitada e olha para cima; uma figura bege de barba se inclina sobre ela e segura seu queixo firmemente. O fundo é cinza-claro, com contornos pretos.',
+  './assets/ilustracao-04.jpeg': 'Ilustração em aquarela de um homem azul visto de baixo para cima. Ele está segurando um objeto com as mãos atrás da cabeça e possui manchas vermelhas no rosto, mãos e no objeto. Ele tem cabelo curto, bigode e cavanhaque; o fundo é cinza claro.',
+  './assets/ilustracao-05.jpeg': 'Ilustração em aquarela de duas pessoas vistas de costas diante de uma janela. A figura em azul usa moletom com capuz e inclina a cabeça sobre o ombro da figura em bege, de cabelo bem curto. O ambiente ao redor é cinza.',
+  './assets/ilustracao-06.jpeg': 'Ilustração em aquarela azul e cinza, em close, do rosto de uma pessoa de óculos. Os contornos pretos mostram a armação, um pequeno símbolo oval na haste, a orelha, o nariz e o bigode.',
+  './assets/ilustracao-07.jpeg': 'Ilustração em aquarela azul de um rosto visto de frente, com cabelo de franja, olhos contornados, bigode e cavanhaque. Os ombros aparecem na parte inferior, diante de um fundo branco e cinza-claro.',
+
   './assets/cartaz-abertura.png': 'Cartaz vertical sobre fundo azul texturizado, com uma moldura fina azul-clara de cantos arredondados. No alto, em letras brancas grandes, lê-se “O FIM DE NÓS”; abaixo, em letras menores, “é o”, seguido por “COMEÇO DE MIM.”. Na metade inferior, duas pessoas aparecem próximas uma da outra, vistas de costas. A pessoa à esquerda tem cabelo curto descolorido, com raízes escuras, veste um moletom vermelho com capuz e apoia a cabeça no ombro da pessoa à direita. Esta tem cabelo escuro curto, um pequeno brinco e camiseta preta; parte do braço direito está visível. A figura de moletom ocupa a maior parte do primeiro plano. Sobre a parte inferior da imagem, em letras brancas manuscritas, está o título “Sinto sua falta”; logo abaixo, em letras espaçadas, aparece “11 de novembro”.', 
   './assets/logo-abertura.png': 'Logomarca do curta sobre fundo azul. Em letras manuscritas brancas, a palavra Sinto aparece no alto à esquerda, sua no centro e falta embaixo à direita.',
   './assets/logo.webp': 'Logomarca do curta em letras manuscritas. As palavras Sinto, sua e falta aparecem lado a lado, com traços finos e irregulares.',
@@ -122,6 +130,41 @@ const recordPlayer = document.querySelector('.record-player');
 audioSite.addEventListener('playing', () => recordPlayer.classList.add('is-playing'));
 for (const eventName of ['pause', 'ended', 'waiting', 'error']) audioSite.addEventListener(eventName, () => recordPlayer.classList.remove('is-playing'));
 audioSite.addEventListener('error', () => { document.querySelector('#musica-erro').hidden = false; });
+
+// Narração geral do site, iniciada somente a pedido do visitante.
+const audioDescricao = document.querySelector('#audio-descricao');
+const audioDescricaoStatus = document.querySelector('#audio-descricao-status');
+let narrandoSite = false;
+let narracaoAtual = null;
+function pararAudiodescricao() {
+  narrandoSite = false;
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  audioDescricao.setAttribute('aria-pressed', 'false');
+  audioDescricao.textContent = 'Ouvir audiodescrição';
+}
+audioDescricao.addEventListener('click', () => {
+  if (narrandoSite) { pararAudiodescricao(); audioDescricaoStatus.textContent = 'Audiodescrição encerrada.'; return; }
+  if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+    audioDescricaoStatus.textContent = 'A audiodescrição por voz não está disponível neste navegador. Use um leitor de tela ou tente outro navegador.';
+    return;
+  }
+  audioSite.pause();
+  const texto = 'Bem-vinda, bem-vindo ao site do curta Sinto sua falta. A página usa azul-claro, preto e branco, com nuvens e letras que lembram uma máquina de escrever. No topo ficam a marca da Agência Phos, os links de navegação, os controles para aumentar as letras e ouvir esta audiodescrição. Na abertura, o título animado aparece ao lado de um cartaz com duas pessoas se beijando, diante de luzes noturnas. A frase diz: O fim de nós é o começo de mim. Abaixo, há um toca-discos com controle para ouvir a trilha sonora. Na seção O filme, você encontra a sinopse e as informações de acesso e conteúdo. Na seção Primeiro olhar está o teaser. Em Memórias em quadro, há um storyboard em faixa horizontal e cartazes; selecione cada imagem para ampliá-la e ler sua descrição. Em Quem conta a história estão os créditos, retratos da equipe, apoios e patrocínios. A seção Seu olhar apresenta uma pergunta sobre relacionamentos abusivos. Ao escolher uma resposta e enviar, aparecem informações e canais de apoio. No fim da página ficam os dados de estreia, o botão de calendário e o Instagram. Use a tecla Tab para percorrer os controles, Enter ou espaço para ativá-los e Escape para fechar uma imagem ampliada. Para encerrar esta narração, pressione novamente o botão de audiodescrição.';
+  narracaoAtual = new SpeechSynthesisUtterance(texto);
+  narracaoAtual.lang = 'pt-BR';
+  const voz = window.speechSynthesis.getVoices().find(v => v.lang.toLowerCase() === 'pt-br');
+  if (voz) narracaoAtual.voice = voz;
+  narracaoAtual.onend = () => { narrandoSite = false; audioDescricao.setAttribute('aria-pressed', 'false'); audioDescricao.textContent = 'Ouvir audiodescrição'; audioDescricaoStatus.textContent = 'Audiodescrição concluída.'; };
+  narracaoAtual.onerror = () => { if (!narrandoSite) return; narrandoSite = false; audioDescricao.setAttribute('aria-pressed', 'false'); audioDescricao.textContent = 'Ouvir audiodescrição'; audioDescricaoStatus.textContent = 'Não foi possível reproduzir a audiodescrição. Tente novamente ou use um leitor de tela.'; };
+  narrandoSite = true;
+  audioDescricao.setAttribute('aria-pressed', 'true');
+  audioDescricao.textContent = 'Parar audiodescrição';
+  audioDescricaoStatus.textContent = 'Audiodescrição iniciada. A trilha sonora foi pausada.';
+  window.speechSynthesis.speak(narracaoAtual);
+});
+audioSite.addEventListener('play', () => { if (narrandoSite) { pararAudiodescricao(); audioDescricaoStatus.textContent = 'Audiodescrição encerrada para reproduzir a trilha.'; } });
+window.addEventListener('pagehide', () => { if (narrandoSite) pararAudiodescricao(); });
+
 
 const titleAnimation = document.querySelector('#assinatura-titulo');
 const titleControl = document.querySelector('#assinatura-controle');
