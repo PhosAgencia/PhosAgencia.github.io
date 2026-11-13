@@ -130,3 +130,9 @@
 .extra-cloud-one{left:-13%;top:37%;transform:rotate(8deg)}.extra-cloud-two{right:-13%;top:65%;transform:scaleX(-1) rotate(-8deg)}
 .about .extra-cloud{opacity:.19}.gallery .extra-cloud{opacity:.26}.team .extra-cloud{opacity:.25}.poll .extra-cloud{opacity:.24}
 @media(max-width:600px){.extra-cloud{width:250px;background-image:url('./assets/nuvem-canva-480.webp');opacity:.22}.extra-cloud-one{left:-150px}.extra-cloud-two{right:-150px}}
+
+/* Alinhamento das opções e assinatura com transparência. */
+#support-form .poll-option:not(.fact-option){align-items:center}
+#support-form .poll-option:not(.fact-option) input{align-self:center;margin:0}
+.hero h1 .assinatura-canvas{display:block;width:min(100%, 285px);height:auto}
+.hero h1 #assinatura-titulo.assinatura-processada{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}

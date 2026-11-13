@@ -170,6 +170,41 @@ const titleAnimation = document.querySelector('#assinatura-titulo');
 const titleControl = document.querySelector('#assinatura-controle');
 const titleMotionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
+// Recorta o fundo azul de cada quadro, preservando os traços escuros da assinatura.
+const assinaturaCanvas = document.createElement('canvas');
+assinaturaCanvas.className = 'assinatura-canvas';
+assinaturaCanvas.width = 448;
+assinaturaCanvas.height = 572;
+assinaturaCanvas.setAttribute('aria-hidden', 'true');
+const assinaturaContext = assinaturaCanvas.getContext('2d', { willReadFrequently: true });
+if (assinaturaContext) {
+  titleAnimation.after(assinaturaCanvas);
+  titleAnimation.classList.add('assinatura-processada');
+  let quadroAssinatura = null;
+  const desenharAssinatura = (origem) => {
+    assinaturaContext.drawImage(origem, 0, 0, assinaturaCanvas.width, assinaturaCanvas.height);
+    const imagem = assinaturaContext.getImageData(0, 0, assinaturaCanvas.width, assinaturaCanvas.height);
+    const pixels = imagem.data;
+    for (let i = 0; i < pixels.length; i += 4) {
+      // O fundo tem canal azul alto; a escrita é preta. Mantém antisserrilhamento.
+      const alpha = Math.max(0, Math.min(255, (210 - pixels[i + 2]) * 2.4));
+      pixels[i] = 0; pixels[i + 1] = 0; pixels[i + 2] = 0; pixels[i + 3] = alpha;
+    }
+    assinaturaContext.putImageData(imagem, 0, 0);
+  };
+  const quadro = () => {
+    if (titleAnimation.readyState >= 2) desenharAssinatura(titleAnimation);
+    if (!titleAnimation.paused && !titleAnimation.ended) quadroAssinatura = requestAnimationFrame(quadro);
+  };
+  titleAnimation.addEventListener('play', () => { cancelAnimationFrame(quadroAssinatura); quadroAssinatura = requestAnimationFrame(quadro); });
+  titleAnimation.addEventListener('seeked', () => { if (titleAnimation.readyState >= 2) desenharAssinatura(titleAnimation); });
+  titleAnimation.addEventListener('loadeddata', () => { if (titleAnimation.paused) desenharAssinatura(titleAnimation); });
+  const poster = new Image();
+  poster.onload = () => { if (titleAnimation.readyState < 2) desenharAssinatura(poster); };
+  poster.src = titleAnimation.poster;
+}
+
+
 function updateTitleControl() {
   titleControl.textContent = titleAnimation.ended ? 'Repetir animação do título'
     : titleAnimation.paused ? 'Reproduzir animação do título' : 'Pausar animação do título';
